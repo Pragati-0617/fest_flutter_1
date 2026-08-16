@@ -2,22 +2,8 @@ staticSites:
   - name: fest-flutter-web
     buildCommand: bash build.sh
     publishPath: build/web
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
     envVars:
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_KEY
         sync: false
-    headers:
-      - path: /*
-        name: X-Frame-Options
-        value: SAMEORIGIN
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
-      - path: /*
-        name: Cache-Control
-        value: no-cache

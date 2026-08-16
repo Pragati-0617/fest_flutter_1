@@ -24,4 +24,7 @@ if [ -n "${SUPABASE_URL:-}" ] || [ -n "${SUPABASE_KEY:-}" ]; then
   printf 'SUPABASE_URL=%s\nSUPABASE_KEY=%s\n' "${SUPABASE_URL:-}" "${SUPABASE_KEY:-}" > .env
 fi
 
-flutter build web --release --base-href /
+flutter build web --release \
+  --base-href / \
+  --dart-define=SUPABASE_URL="${SUPABASE_URL:-}" \
+  --dart-define=SUPABASE_KEY="${SUPABASE_KEY:-}"

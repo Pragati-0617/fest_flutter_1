@@ -153,9 +153,25 @@ class CulturalEvent extends FestEvent implements Certifiable {
 // 4. FLUTTER UI INTEGRATION
 // ============================================================================
 
+const String appSupabaseUrl = String.fromEnvironment(
+  'SUPABASE_URL',
+  defaultValue: '',
+);
+const String appSupabaseKey = String.fromEnvironment(
+  'SUPABASE_KEY',
+  defaultValue: '',
+);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env');
+
+  if (appSupabaseUrl.isEmpty || appSupabaseKey.isEmpty) {
+    try {
+      await dotenv.load(fileName: '.env');
+    } catch (_) {
+      // Ignore missing local .env files during production builds.
+    }
+  }
 
   runApp(
     const MaterialApp(
@@ -1166,10 +1182,17 @@ class _CollegeFestDashboardState extends State<CollegeFestDashboard> {
     required String collegeName,
     required String emailAddress,
   }) async {
-    final supabaseUrl = dotenv.env['SUPABASE_URL'];
-    final supabaseKey = dotenv.env['SUPABASE_KEY'];
+    final supabaseUrl = appSupabaseUrl.isNotEmpty
+        ? appSupabaseUrl
+        : dotenv.env['SUPABASE_URL'];
+    final supabaseKey = appSupabaseKey.isNotEmpty
+        ? appSupabaseKey
+        : dotenv.env['SUPABASE_KEY'];
 
-    if (supabaseUrl == null || supabaseKey == null) {
+    if (supabaseUrl == null ||
+        supabaseKey == null ||
+        supabaseUrl.isEmpty ||
+        supabaseKey.isEmpty) {
       if (!mounted) return false;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -1207,10 +1230,18 @@ class _CollegeFestDashboardState extends State<CollegeFestDashboard> {
     String email,
     String eventTitle,
   ) async {
-    final supabaseUrl = dotenv.env['SUPABASE_URL'];
-    final supabaseKey = dotenv.env['SUPABASE_KEY'];
+    final supabaseUrl = appSupabaseUrl.isNotEmpty
+        ? appSupabaseUrl
+        : dotenv.env['SUPABASE_URL'];
+    final supabaseKey = appSupabaseKey.isNotEmpty
+        ? appSupabaseKey
+        : dotenv.env['SUPABASE_KEY'];
 
-    if (supabaseUrl == null || supabaseKey == null) return null;
+    if (supabaseUrl == null ||
+        supabaseKey == null ||
+        supabaseUrl.isEmpty ||
+        supabaseKey.isEmpty)
+      return null;
 
     final uri = Uri.parse(
       '$supabaseUrl/rest/v1/registrations?select=*&event_title=eq.${Uri.encodeComponent(eventTitle)}&email_address=eq.${Uri.encodeComponent(email)}&order=registered_at.desc&limit=1',
