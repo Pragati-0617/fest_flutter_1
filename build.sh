@@ -2,17 +2,13 @@
 set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
-export FLUTTER_VERSION="${FLUTTER_VERSION:-3.12.2}"
 export FLUTTER_HOME="${FLUTTER_HOME:-$PWD/.flutter-sdk}"
 export PATH="$FLUTTER_HOME/bin:$PATH"
 
 if [ ! -d "$FLUTTER_HOME/bin" ]; then
-  echo "Installing Flutter ${FLUTTER_VERSION}..."
-  curl -fsSL "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz" -o /tmp/flutter.tar.xz
+  echo "Installing Flutter stable channel..."
   rm -rf "$FLUTTER_HOME"
-  mkdir -p "$FLUTTER_HOME"
-  tar -xf /tmp/flutter.tar.xz -C /tmp
-  mv /tmp/flutter "$FLUTTER_HOME"
+  git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$FLUTTER_HOME"
 fi
 
 flutter --version
